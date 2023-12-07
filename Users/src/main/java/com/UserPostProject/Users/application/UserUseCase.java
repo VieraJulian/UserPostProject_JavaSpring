@@ -8,6 +8,8 @@ import com.UserPostProject.Users.infrastructure.dto.UserPostDTO;
 import com.UserPostProject.Users.infrastructure.inputport.IUserInputPort;
 import com.UserPostProject.Users.infrastructure.outputport.IPostServicePort;
 import com.UserPostProject.Users.infrastructure.outputport.IUserRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +58,8 @@ public class UserUseCase implements IUserInputPort {
     }
 
     @Override
+    @CircuitBreaker(name = "posts-service", fallbackMethod = "fallbackGetPosts")
+    @Retry(name = "posts-service")
     public UserPostDTO getUser(String id) {
         User userFound = userRepository.getById(id);
 
@@ -101,5 +105,14 @@ public class UserUseCase implements IUserInputPort {
     @Override
     public void deleteUser(String id) {
         userRepository.delete(id);
+    }
+
+    public UserPostDTO fallbackGetPosts(Throwable throwable){
+        return UserPostDTO.builder()
+                .id(null)
+                .name(null)
+                .email(null)
+                .posts(null)
+                .build();
     }
 }
