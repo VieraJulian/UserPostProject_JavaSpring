@@ -10,6 +10,8 @@ public interface IPostRepository {
 
     public Post getById(String id);
 
+    public List<Post> getByUserId(String userId);
+
     public List<Post> getAll();
 
     public void deletePost(String id);

@@ -27,6 +27,12 @@ public class MongoDBRepository implements IPostRepository {
     }
 
     @Override
+    public List<Post> getByUserId(String userId) {
+        Query query = new Query(Criteria.where("user_id").is(userId));
+        return mt.find(query, Post.class);
+    }
+
+    @Override
     public List<Post> getAll() {
         return mt.findAll(Post.class);
     }

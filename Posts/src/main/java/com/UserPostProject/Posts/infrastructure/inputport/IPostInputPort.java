@@ -12,6 +12,8 @@ public interface IPostInputPort {
 
     public PostDTO getPost(String id);
 
+    public List<PostDTO> getUserPosts(String userId);
+
     public List<PostDTO> getAll();
 
     public void deletePost(String id);

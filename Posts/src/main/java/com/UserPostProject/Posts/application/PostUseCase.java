@@ -59,6 +59,24 @@ public class PostUseCase implements IPostInputPort {
     }
 
     @Override
+    public List<PostDTO> getUserPosts(String userId) {
+        List<Post> postsDB = postRepository.getByUserId(userId);
+        List<PostDTO> postsDTOs = new ArrayList<>();
+
+        for (Post post : postsDB){
+            PostDTO postDTO = PostDTO.builder()
+                    .id(post.getId())
+                    .user_id(post.getUser_id())
+                    .post(post.getPost())
+                    .build();
+
+            postsDTOs.add(postDTO);
+        }
+
+        return postsDTOs;
+    }
+
+    @Override
     public List<PostDTO> getAll() {
         List<Post> postsDB = postRepository.getAll();
         List<PostDTO> postsDTOs = new ArrayList<>();

@@ -1,9 +1,12 @@
 package com.UserPostProject.Users.application;
 
 import com.UserPostProject.Users.domain.User;
+import com.UserPostProject.Users.infrastructure.dto.PostDTO;
+import com.UserPostProject.Users.infrastructure.dto.PostItemDTO;
 import com.UserPostProject.Users.infrastructure.dto.UserDTO;
 import com.UserPostProject.Users.infrastructure.dto.UserPostDTO;
 import com.UserPostProject.Users.infrastructure.inputport.IUserInputPort;
+import com.UserPostProject.Users.infrastructure.outputport.IPostServicePort;
 import com.UserPostProject.Users.infrastructure.outputport.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,9 @@ public class UserUseCase implements IUserInputPort {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IPostServicePort postServicePort;
 
     @Override
     public UserDTO createUser(UserDTO user) {
@@ -51,7 +57,26 @@ public class UserUseCase implements IUserInputPort {
 
     @Override
     public UserPostDTO getUser(String id) {
-        return null;
+        User userFound = userRepository.getById(id);
+
+        List<PostDTO> posts = postServicePort.getUserPosts(userFound.getId());
+        List<PostItemDTO> postItems = new ArrayList<>();
+
+        for (PostDTO postDTO : posts){
+            PostItemDTO postItemDTO = PostItemDTO.builder()
+                    .id(postDTO.getId())
+                    .post(postDTO.getPost())
+                    .build();
+
+            postItems.add(postItemDTO);
+        }
+
+        return UserPostDTO.builder()
+                .id(userFound.getId())
+                .name(userFound.getName())
+                .email(userFound.getEmail())
+                .posts(postItems)
+                .build();
     }
 
     @Override

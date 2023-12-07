@@ -49,6 +49,17 @@ public class PostController {
         }
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<PostDTO>> getUserPosts(@PathVariable String userId){
+        try {
+            List<PostDTO> posts = postInputPort.getUserPosts(userId);
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<PostDTO>> getAll(){
         try {
